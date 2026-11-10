@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TareaFácil — Organizador escolar</title>
+<style>
+:root {
+  --site-primary: #6558d3;
+  --site-on-primary: #ffffff;
+  --site-secondary: #e8e5ff;
+  --site-on-secondary: #30286b;
+  --site-background: #f7f7fc;
+  --site-on-background: #24233a;
+  --site-font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-font-heading: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-heading-scale: 1;
+  --site-spacing-scale: 1;
+  --site-radius-scale: 1;
+  --site-decoration-opacity: 1;
+  color-scheme: light dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--site-font-body); background: var(--site-background); color: var(--site-on-background); }
+.app-root { min-height: 100vh; width: 100%; border-radius: 0; background-color: light-dark(var(--site-background), #171624); color: light-dark(var(--site-on-background), #f5f3ff); }
+.topbar { background: var(--site-primary); color: var(--site-on-primary); padding: calc(22px * var(--site-spacing-scale)) max(22px, calc((100% - 1080px)/2)); }
+.topbar-inner { max-width:1080px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.brand-row { display:flex; align-items:center; gap:12px; }
+.brand-name { font-weight:800; letter-spacing:-.4px; }
+.top-nav { display:flex; align-items:center; gap:8px; }
+.top-nav a { color:white; text-decoration:none; font-size:13px; font-weight:650; padding:9px 12px; border-radius:10px; opacity:.92; }
+.top-nav a:hover { background:rgba(255,255,255,.16); opacity:1; }
+.top-nav .nav-cta { background:#fff; color:var(--site-primary); }
+.logo { width:44px; height:44px; display:grid; place-items:center; background:rgba(255,255,255,.18); border-radius:14px; font-size:23px; }
+h1 { font-family:var(--site-font-heading); font-size:calc(28px * var(--site-heading-scale)); line-height:1.1; margin:0; }
+.tagline { margin:5px 0 0; opacity:.88; font-size:14px; }
+main { max-width:1080px; margin:0 auto; padding:28px 22px 48px; }
+.welcome { position:relative; overflow:hidden; display:flex; justify-content:space-between; align-items:center; gap:24px; margin-bottom:24px; padding:30px; border:1px solid light-dark(#e6e1ff,#39364d); border-radius:24px; background:linear-gradient(120deg,light-dark(#f0edff,#29253f),light-dark(#fff,#242235)); }
+.welcome-copy { max-width:620px; position:relative; z-index:1; }
+.eyebrow { display:inline-flex; align-items:center; gap:7px; font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--site-primary); background:light-dark(#e4dfff,#393251); padding:7px 10px; border-radius:999px; margin-bottom:14px; }
+.welcome h2 { font-size:clamp(28px,4vw,42px); line-height:1.12; letter-spacing:-1.2px; margin:0 0 12px; }
+.welcome p { max-width:490px; line-height:1.65; margin:0; color:light-dark(#6f6b84,#c4bfd8); }
+.hero-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+.hero-actions .primary { width:auto; margin:0; padding:12px 16px; }
+.hero-decoration { width:125px; height:125px; flex:0 0 125px; display:grid; place-items:center; border-radius:34px; background:linear-gradient(145deg,#8175ec,#5a4bc4); color:white; font-size:60px; box-shadow:0 18px 40px #6558d333; transform:rotate(5deg); }
+.today { border:1px solid light-dark(#e3e0f2,#39364d); padding:10px 14px; border-radius:14px; font-size:13px; white-space:nowrap; background:light-dark(#fff,#242235); }
+.stats { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:22px; }
+.stat { border:1px solid light-dark(#e8e5f4,#39364d); background:light-dark(#fff,#242235); padding:18px; border-radius:calc(18px * var(--site-radius-scale)); }
+.stat-top { display:flex; justify-content:space-between; align-items:center; font-size:13px; color:light-dark(#77728d,#c4bfd8); }
+.stat-icon { width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:var(--site-secondary);color:var(--site-on-secondary);font-size:17px; }
+.stat strong { display:block; font-size:29px; margin-top:12px; }
+.layout { display:grid; grid-template-columns: minmax(270px, .8fr) minmax(0, 1.5fr); gap:20px; align-items:start; }
+.panel { background:light-dark(#fff,#242235); border:1px solid light-dark(#e8e5f4,#39364d); border-radius:calc(20px * var(--site-radius-scale)); padding:22px; box-shadow:0 5px 18px rgba(45,35,95,.035); }
+.panel h3 { margin:0 0 18px; font-size:18px; }
+label { display:block; font-size:13px; font-weight:650; margin:14px 0 7px; }
+input, select, textarea { width:100%; border:1px solid light-dark(#dedbed,#4a465f); background:light-dark(#fff,#1d1b2b); color:inherit; border-radius:11px; padding:12px 13px; font:inherit; font-size:14px; outline:none; }
+input:focus, select:focus, textarea:focus { border-color:var(--site-primary); box-shadow:0 0 0 3px rgba(101,88,211,.13); }
+textarea { min-height:76px; resize:vertical; }
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+button { font:inherit; cursor:pointer; border:0; border-radius:11px; padding:11px 14px; font-weight:650; transition:transform .12s, opacity .12s; }
+button:active { transform:scale(.98); }
+.primary { width:100%; background:var(--site-primary); color:var(--site-on-primary); margin-top:18px; }
+.secondary { background:var(--site-secondary); color:var(--site-on-secondary); }
+.filters { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+.filter { background:light-dark(#f3f1fb,#302d43); color:light-dark(#656079,#d2cde5); padding:8px 12px; font-size:13px; }
+.filter.active { background:var(--site-primary); color:white; }
+.task-list { display:grid; gap:10px; }
+.task { border:1px solid light-dark(#ebe8f5,#3c3851); border-radius:14px; padding:14px; display:flex; gap:12px; align-items:flex-start; }
+.check { appearance:none; flex:0 0 20px; width:20px; height:20px; padding:0; border-radius:6px; border:1.5px solid #aaa3c8; margin-top:2px; cursor:pointer; display:grid; place-items:center; }
+.check:checked { background:var(--site-primary); border-color:var(--site-primary); }
+.check:checked::after { content:'✓'; color:white; font-size:13px; font-weight:800; }
+.task-content { min-width:0; flex:1; }
+.task-title { font-weight:700; overflow-wrap:anywhere; }
+.task.done .task-title { text-decoration:line-through; color:light-dark(#8d89a0,#918ba8); }
+.task-note { font-size:13px; color:light-dark(#77728d,#c4bfd8); margin-top:5px; overflow-wrap:anywhere; }
+.task-meta { display:flex; gap:7px; flex-wrap:wrap; margin-top:10px; align-items:center; }
+.pill { border-radius:8px; padding:5px 8px; font-size:11px; font-weight:700; background:light-dark(#f0edff,#39344f); color:light-dark(#5546b5,#d7d0ff); }
+.pill.overdue { background:light-dark(#fff0ef,#4a292d); color:light-dark(#b84242,#ffb3b3); }
+.pill.done-pill { background:light-dark(#e7f8ee,#1e3d31); color:light-dark(#27774a,#9be4b8); }
+.task-actions { display:flex; gap:6px; }
+.icon-btn { background:transparent; color:light-dark(#77728d,#c4bfd8); padding:6px 8px; font-size:15px; }
+.icon-btn:hover { background:light-dark(#f3f1fb,#302d43); }
+.empty { text-align:center; padding:35px 12px; color:light-dark(#77728d,#c4bfd8); }
+.empty .emoji { font-size:34px; margin-bottom:9px; }
+.empty strong { display:block; color:inherit; margin-bottom:5px; }
+.footer-note { margin-top:16px; font-size:12px; color:light-dark(#858099,#aaa4c0); text-align:center; }
+.site-footer { max-width:1080px; margin:0 auto; padding:0 22px 28px; }
+.footer-inner { border-top:1px solid light-dark(#e6e2f2,#39364d); padding-top:18px; display:flex; align-items:center; justify-content:space-between; gap:12px; color:light-dark(#858099,#aaa4c0); font-size:12px; }
+.footer-brand { color:light-dark(#4c438e,#d5d0ff); font-weight:800; font-size:14px; }
+.progress-wrap { margin:0 0 18px; }
+.progress-label { display:flex; justify-content:space-between; gap:12px; font-size:12px; color:light-dark(#77728d,#c4bfd8); margin-bottom:8px; }
+.progress-track { height:9px; border-radius:999px; background:light-dark(#eeecf7,#37334a); overflow:hidden; }
+.progress-fill { height:100%; width:0; border-radius:999px; background:linear-gradient(90deg,var(--site-primary),#a49af7); transition:width .25s ease; }
+.search-box { margin-bottom:14px; }
+.task-actions { flex-shrink:0; }
+.tools-row { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 14px; }
+.tools-row button { font-size:12px; }
+.editing-banner { display:none; padding:10px 12px; margin-bottom:10px; border-radius:10px; background:light-dark(#fff5d9,#443a22); color:light-dark(#795b12,#ffe5a0); font-size:13px; }
+.toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:#26233d; color:#fff; border-radius:12px; padding:12px 16px; box-shadow:0 8px 30px #0002; font-size:14px; display:none; z-index:10; max-width:calc(100% - 32px); }
+.feature-section { margin-top:22px; scroll-margin-top:18px; }
+.section-heading { display:flex; justify-content:space-between; align-items:end; gap:12px; margin-bottom:14px; }
+.section-heading h3 { margin:0; font-size:21px; }
+.section-heading p { margin:5px 0 0; font-size:13px; color:light-dark(#77728d,#c4bfd8); }
+.feature-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.feature-panel { min-width:0; background:light-dark(#fff,#242235); border:1px solid light-dark(#e8e5f4,#39364d); border-radius:20px; padding:20px; }
+.calendar-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px; }
+.calendar-head strong { font-size:15px; }
+.calendar-head button { background:var(--site-secondary); color:var(--site-on-secondary); padding:8px 11px; }
+.calendar-grid { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:5px; }
+.calendar-day-name,.calendar-day { text-align:center; font-size:12px; padding:9px 2px; }
+.calendar-day-name { color:light-dark(#77728d,#c4bfd8); font-weight:700; }
+.calendar-day { border-radius:9px; background:light-dark(#f6f4fc,#302d43); border:1px solid transparent; color:inherit; min-width:0; padding:9px 0; }
+.calendar-day.has-tasks { box-shadow:inset 0 -3px 0 var(--site-primary); font-weight:800; }
+.calendar-day.selected { background:var(--site-primary); color:white; }
+.calendar-day.today { border-color:var(--site-primary); }
+.calendar-day.blank { visibility:hidden; }
+.calendar-agenda { margin-top:14px; border-top:1px solid light-dark(#e8e5f4,#39364d); padding-top:12px; font-size:13px; }
+.calendar-agenda ul { margin:8px 0 0; padding-left:18px; }
+.achievement-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.achievement { padding:13px; border:1px solid light-dark(#e8e5f4,#39364d); border-radius:14px; opacity:.58; }
+.achievement.unlocked { opacity:1; background:light-dark(#f5f2ff,#302a48); border-color:#b9afff; }
+.achievement span { font-size:25px; }
+.achievement strong { display:block; font-size:13px; margin:5px 0 3px; }
+.achievement small { color:light-dark(#77728d,#c4bfd8); line-height:1.4; }
+.schedule-table { width:100%; border-collapse:collapse; font-size:13px; }
+.schedule-table th,.schedule-table td { border-bottom:1px solid light-dark(#e8e5f4,#39364d); padding:8px 5px; text-align:left; }
+.schedule-table th { color:light-dark(#77728d,#c4bfd8); }
+.schedule-table input { padding:8px; min-width:0; font-size:12px; }
+.profile-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.inline-control { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid light-dark(#e8e5f4,#39364d); font-size:14px; }
+.inline-control input[type=checkbox] { width:20px; height:20px; accent-color:var(--site-primary); }
+.about-list details { padding:12px 0; border-bottom:1px solid light-dark(#e8e5f4,#39364d); font-size:14px; }
+.about-list summary { cursor:pointer; font-weight:700; }
+.about-list details p { color:light-dark(#77728d,#c4bfd8); line-height:1.6; margin:9px 0 0; }
+.dark-mode { --site-background:#171624; --site-on-background:#f5f3ff; --site-secondary:#393251; --site-on-secondary:#e4dfff; }
+.dark-mode .welcome,.dark-mode .stat,.dark-mode .panel,.dark-mode .feature-panel { background:#242235; border-color:#39364d; color:#f5f3ff; }
+.dark-mode .welcome { background:linear-gradient(120deg,#29253f,#242235); }
+.dark-mode input,.dark-mode select,.dark-mode textarea { background:#1d1b2b; color:#f5f3ff; border-color:#4a465f; }
+.dark-mode .task,.dark-mode .achievement,.dark-mode .schedule-table th,.dark-mode .schedule-table td,.dark-mode .calendar-agenda { border-color:#39364d; }
+.dark-mode .calendar-day { background:#302d43; color:#f5f3ff; }
+.dark-mode .calendar-day.selected { background:var(--site-primary); }
+.dark-mode .task-note,.dark-mode .stat-top,.dark-mode .section-heading p,.dark-mode .about-list details p { color:#c4bfd8; }
+@media(max-width:760px) { .layout {grid-template-columns:1fr;} .topbar-inner {align-items:flex-start;flex-direction:column;gap:12px;} .top-nav {width:100%;flex-wrap:wrap;} .top-nav a {padding:7px 9px;} .welcome {align-items:flex-start;flex-direction:column;padding:23px;} .hero-decoration {display:none;} .stats {gap:9px;} .stat {padding:13px;} .stat strong {font-size:24px;} .stat-top {font-size:11px;} main {padding:22px 14px 36px;} .topbar {padding:20px 16px;} .site-footer {padding:0 14px 24px;} .footer-inner {align-items:flex-start;flex-direction:column;} }
+@media(max-width:760px) { .feature-grid {grid-template-columns:1fr;} }
+@media(max-width:420px) { .stats {grid-template-columns:1fr 1fr;} .stats .stat:last-child {grid-column:span 2;} .form-grid {grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class="app-root">
+  <header class="topbar">
+    <div class="topbar-inner"><div class="brand-row"><div class="logo" aria-hidden="true">✏️</div><div><h1 class="brand-name">TareaFácil</h1><p class="tagline">Tu organización empieza aquí.</p></div></div><nav class="top-nav" aria-label="Navegación principal"><a href="#inicio">Inicio</a><a href="#mis-tareas">Mis tareas</a><a href="#calendario">Calendario</a><a href="#horario">Horario</a><a href="#perfil">Mi perfil</a><a class="nav-cta" href="#taskTitle">＋ Crear tarea</a></nav></div>
+  </header>
+  <main>
+    <section class="welcome" id="inicio"><div class="welcome-copy"><span class="eyebrow">✦ TU ASISTENTE ESCOLAR</span><div id="todayLabel" class="today" style="display:inline-block;margin-bottom:14px"></div><h2>Organiza tus tareas.<br>Disfruta aprender.</h2><p>Planifica tus entregas, sigue tu progreso y ten todo lo importante en un solo lugar. Empieza hoy, a tu ritmo.</p><div class="hero-actions"><button class="primary" type="button" onclick="document.getElementById('taskTitle').focus();document.getElementById('taskTitle').scrollIntoView({behavior:'smooth',block:'center'});">＋ Crear mi primera tarea</button><a href="#mis-tareas" class="secondary" style="display:inline-flex;align-items:center;text-decoration:none;padding:12px 16px;border-radius:11px;font-size:14px;font-weight:650;">Ver mis tareas ↓</a></div></div><div class="hero-decoration" aria-hidden="true">✏️</div></section>
+    <section class="stats" aria-label="Resumen de tareas">
+      <div class="stat"><div class="stat-top"><span>Total de tareas</span><span class="stat-icon">📋</span></div><strong id="totalCount">0</strong></div>
+      <div class="stat"><div class="stat-top"><span>Pendientes</span><span class="stat-icon">⏳</span></div><strong id="pendingCount">0</strong></div>
+      <div class="stat"><div class="stat-top"><span>Completadas</span><span class="stat-icon">✅</span></div><strong id="doneCount">0</strong></div>
+    </section>
+    <section class="layout">
+      <div class="panel" id="funciones">
+        <h3>➕ Agregar una tarea</h3>
+        <form id="taskForm">
+          <label for="taskTitle">Nombre de la tarea *</label>
+          <input id="taskTitle" maxlength="100" placeholder="Ej. Terminar mi exposición" required>
+          <div class="form-grid"><div><label for="taskSubject">Curso</label><select id="taskSubject"><option>Computación</option><option>Matemática</option><option>Comunicación</option><option>Ciencia y Tecnología</option><option>Ciencias Sociales</option><option>Inglés</option><option>EPT</option><option>Otro</option></select></div><div><label for="taskDate">Fecha de entrega *</label><input id="taskDate" type="date" required></div></div>
+          <label for="taskPriority">Prioridad</label><select id="taskPriority"><option value="Normal">Normal</option><option value="Alta">Alta</option><option value="Baja">Baja</option></select>
+          <label for="taskNotes">Detalles (opcional)</label><textarea id="taskNotes" maxlength="300" placeholder="Anota lo que necesitas recordar..."></textarea>
+          <div id="editingBanner" class="editing-banner">✏️ Estás editando una tarea.</div><button class="primary" id="submitTaskButton" type="submit">＋ Guardar tarea</button><button class="secondary" id="cancelEditButton" type="button" style="display:none;width:100%;margin-top:8px">Cancelar edición</button>
+        </form>
+      </div>
+      <div class="panel" id="mis-tareas">
+        <h3>🗓️ Mis tareas</h3>
+        <div class="progress-wrap"><div class="progress-label"><span>Tu progreso</span><strong id="progressText">0% completado</strong></div><div class="progress-track" role="progressbar" aria-label="Progreso de tareas" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressTrack"><div class="progress-fill" id="progressFill"></div></div></div>
+        <div class="tools-row"><button class="secondary" id="reminderButton" type="button">🔔 Activar avisos</button><button class="secondary" id="exportButton" type="button">📥 Exportar tareas</button></div>
+        <div class="search-box"><label for="taskSearch">🔎 Buscar tarea</label><input id="taskSearch" type="search" placeholder="Escribe el nombre o curso..."></div>
+        <div class="filters" role="group" aria-label="Filtrar tareas"><button class="filter active" data-filter="all">Todas</button><button class="filter" data-filter="pending">Pendientes</button><button class="filter" data-filter="done">Completadas</button></div>
+        <div id="taskList" class="task-list" aria-live="polite"></div>
+        <div class="footer-note">Tus tareas se guardan en este navegador automáticamente.</div>
+      </div>
+    </section>
+    <section class="feature-section" id="calendario"><div class="section-heading"><div><h3>🗓️ Calendario de tareas</h3><p>Revisa las entregas por fecha y planifica tu semana.</p></div></div><div class="feature-grid"><div class="feature-panel"><div class="calendar-head"><button type="button" id="prevMonth" aria-label="Mes anterior">←</button><strong id="calendarMonth"></strong><button type="button" id="nextMonth" aria-label="Mes siguiente">→</button></div><div class="calendar-grid" id="calendarGrid"></div><div class="calendar-agenda" id="calendarAgenda" aria-live="polite"></div></div><div class="feature-panel"><h3 style="margin:0 0 14px">🏆 Tus logros</h3><p style="font-size:13px;color:light-dark(#77728d,#c4bfd8);margin-top:0">Cada tarea terminada cuenta. ¡Sigue avanzando!</p><div class="achievement-list" id="achievementList"></div><p class="footer-note" id="achievementSummary"></p></div></div></section>
+    <section class="feature-section" id="horario"><div class="section-heading"><div><h3>📚 Mi horario escolar</h3><p>Escribe tus cursos para tener tu horario a mano. Se guarda en este navegador.</p></div></div><div class="feature-panel"><div style="overflow-x:auto"><table class="schedule-table"><thead><tr><th>Día</th><th>Curso 1</th><th>Curso 2</th><th>Curso 3</th></tr></thead><tbody id="scheduleBody"></tbody></table></div><button class="primary" id="saveSchedule" type="button">💾 Guardar horario</button></div></section>
+    <section class="feature-section" id="perfil"><div class="section-heading"><div><h3>⚙️ Perfil y personalización</h3><p>Adapta TareaFácil a tu estilo.</p></div></div><div class="feature-grid"><div class="feature-panel"><h3 style="margin:0 0 8px">👤 Mi perfil</h3><label for="profileName">¿Cómo quieres que te llamemos?</label><input id="profileName" maxlength="35" placeholder="Escribe tu apodo"><label for="accentColor">Color principal</label><select id="accentColor"><option value="#6558d3">Morado</option><option value="#2878c8">Azul</option><option value="#16866b">Verde</option><option value="#c04d91">Rosa</option><option value="#d07825">Naranja</option></select><button class="primary" id="saveProfile" type="button">Guardar preferencias</button></div><div class="feature-panel"><h3 style="margin:0 0 8px">🌙 Apariencia</h3><div class="inline-control"><span>Activar modo oscuro</span><input id="darkModeToggle" type="checkbox" aria-label="Activar modo oscuro"></div><p style="font-size:13px;color:light-dark(#77728d,#c4bfd8);line-height:1.6">Tus preferencias se guardan en este navegador. No necesitas crear una cuenta ni pagar.</p></div></div></section>
+    <section class="feature-section" id="acerca"><div class="section-heading"><div><h3>💜 Acerca de TareaFácil y ayuda</h3><p>Un espacio creado para ayudarte a organizar tus actividades escolares.</p></div></div><div class="feature-panel about-list"><details><summary>¿Para qué sirve TareaFácil?</summary><p>Te permite registrar tus tareas, indicar el curso y la fecha de entrega, elegir una prioridad, escribir detalles y marcar actividades como completadas.</p></details><details><summary>¿Cómo agrego o edito una tarea?</summary><p>Usa el formulario “Agregar una tarea”. Para modificar una actividad, pulsa el lápiz; para eliminarla, pulsa la papelera.</p></details><details><summary>¿Dónde se guardan mis datos?</summary><p>Por ahora, las tareas, el horario y las preferencias se guardan localmente en este navegador. Si borras los datos del navegador o cambias de dispositivo, podrían no estar disponibles. No ingreses información privada.</p></details><details><summary>¿TareaFácil cuesta dinero?</summary><p>Estas funciones no requieren pagos ni suscripciones. La página todavía no está publicada en un dominio propio.</p></details></div></section>
+  </main>
+  <footer class="site-footer"><div class="footer-inner"><span class="footer-brand">✏️ TareaFácil</span><span>Un espacio sencillo para organizarte mejor.</span><span>© <span id="currentYear">2026</span> TareaFácil · Hecho para estudiantes</span></div></footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+(() => {
+  const STORAGE_KEY = 'tareafacil_tasks_v1';
+  const form = document.getElementById('taskForm');
+  const titleInput = document.getElementById('taskTitle');
+  const subjectInput = document.getElementById('taskSubject');
+  const dateInput = document.getElementById('taskDate');
+  const priorityInput = document.getElementById('taskPriority');
+  const notesInput = document.getElementById('taskNotes');
+  const taskList = document.getElementById('taskList');
+  const searchInput = document.getElementById('taskSearch');
+  const toast = document.getElementById('toast');
+  const submitTaskButton = document.getElementById('submitTaskButton');
+  const cancelEditButton = document.getElementById('cancelEditButton');
+  const editingBanner = document.getElementById('editingBanner');
+  const reminderButton = document.getElementById('reminderButton');
+  let editingId = null;
+  let filter = 'all';
+  let tasks = loadTasks();
+  let toastTimer;
+
+  const todayISO = () => {
+    const d = new Date();
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().slice(0, 10);
+  };
+  dateInput.value = todayISO();
+  dateInput.min = todayISO();
+  document.getElementById('todayLabel').textContent = '📅 ' + new Date().toLocaleDateString('es-PE', { weekday:'long', day:'numeric', month:'long' });
+  document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+  function loadTasks() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved).filter(t => t && typeof t.id === 'string' && typeof t.title === 'string') : [];
+    } catch (e) { return []; }
+  }
+  function saveTasks() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)); }
+    catch (e) { showToast('No se pudieron guardar los datos en este navegador.'); }
+  }
+  function showToast(message) {
+    toast.textContent = message;
+    toast.style.display = 'block';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 2400);
+  }
+  function resetEditMode() {
+    editingId = null;
+    form.reset();
+    dateInput.value = todayISO();
+    editingBanner.style.display = 'none';
+    submitTaskButton.textContent = '＋ Guardar tarea';
+    cancelEditButton.style.display = 'none';
+  }
+  function startEditing(task) {
+    editingId = task.id;
+    titleInput.value = task.title;
+    subjectInput.value = task.subject || 'Otro';
+    dateInput.value = task.due || todayISO();
+    priorityInput.value = task.priority || 'Normal';
+    notesInput.value = task.notes || '';
+    editingBanner.style.display = 'block';
+    submitTaskButton.textContent = '💾 Guardar cambios';
+    cancelEditButton.style.display = 'block';
+    titleInput.focus();
+    form.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+  function safeText(value) { return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function formatDate(iso) {
+    if (!iso) return 'Sin fecha';
+    const parts = iso.split('-').map(Number);
+    const d = new Date(parts[0], parts[1] - 1, parts[2]);
+    return d.toLocaleDateString('es-PE', {day:'numeric', month:'short', year:'numeric'});
+  }
+  const calendarGrid = document.getElementById('calendarGrid');
+  let calendarCursor = new Date();
+  let selectedCalendarDate = todayISO();
+  const scheduleDays = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+  function renderCalendar() {
+    const year = calendarCursor.getFullYear(), month = calendarCursor.getMonth();
+    document.getElementById('calendarMonth').textContent = calendarCursor.toLocaleDateString('es-PE',{month:'long',year:'numeric'});
+    const firstDay = new Date(year,month,1).getDay();
+    const offset = (firstDay + 6) % 7;
+    const daysInMonth = new Date(year,month+1,0).getDate();
+    const names = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+    let html = names.map(n => `<div class="calendar-day-name">${n}</div>`).join('');
+    for (let i=0;i<offset;i++) html += '<div class="calendar-day blank" aria-hidden="true"></div>';
+    for (let day=1;day<=daysInMonth;day++) {
+      const iso = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      const hasTasks = tasks.some(t => t.due === iso && !t.done);
+      html += `<button type="button" class="calendar-day ${hasTasks?'has-tasks ':''}${iso===todayISO()?'today ':''}${iso===selectedCalendarDate?'selected':''}" data-calendar-date="${iso}" aria-label="${day}${hasTasks?', tiene tareas pendientes':''}">${day}</button>`;
+    }
+    calendarGrid.innerHTML = html;
+    const dueTasks = tasks.filter(t => t.due === selectedCalendarDate);
+    document.getElementById('calendarAgenda').innerHTML = `<strong>📌 ${formatDate(selectedCalendarDate)}</strong>` + (dueTasks.length ? `<ul>${dueTasks.map(t=>`<li>${safeText(t.title)} — ${safeText(t.subject)} ${t.done?'(completada)':'(pendiente)'}</li>`).join('')}</ul>` : '<p>No hay tareas registradas para este día.</p>');
+  }
+  function renderAchievements() {
+    const done = tasks.filter(t=>t.done).length;
+    const achievements = [
+      {icon:'🌱',title:'Primer paso',desc:'Completa tu primera tarea',ok:done>=1},
+      {icon:'⭐',title:'¡Cinco logros!',desc:'Completa 5 tareas',ok:done>=5},
+      {icon:'🏅',title:'Súper estudiante',desc:'Completa 10 tareas',ok:done>=10},
+      {icon:'📚',title:'Organización total',desc:'Registra 5 tareas',ok:tasks.length>=5}
+    ];
+    document.getElementById('achievementList').innerHTML = achievements.map(a=>`<div class="achievement ${a.ok?'unlocked':''}"><span>${a.ok?a.icon:'🔒'}</span><strong>${a.title}</strong><small>${a.desc}</small></div>`).join('');
+    document.getElementById('achievementSummary').textContent = `${achievements.filter(a=>a.ok).length} de ${achievements.length} logros desbloqueados`;
+  }
+  function loadSchedule() {
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem('tareafacil_schedule_v1') || '{}') || {}; } catch(e) {}
+    document.getElementById('scheduleBody').innerHTML = scheduleDays.map((day,i)=>`<tr><th>${day}</th>${[0,1,2].map(n=>`<td><input aria-label="${day}, curso ${n+1}" data-schedule-day="${i}" data-schedule-slot="${n}" maxlength="45" placeholder="Curso" value="${safeText(saved[i+'-'+n]||'')}"></td>`).join('')}</tr>`).join('');
+  }
+  function loadProfile() {
+    let profile = {};
+    try { profile = JSON.parse(localStorage.getItem('tareafacil_profile_v1') || '{}') || {}; } catch(e) {}
+    document.getElementById('profileName').value = profile.name || '';
+    document.getElementById('accentColor').value = profile.color || '#6558d3';
+    document.getElementById('darkModeToggle').checked = !!profile.dark;
+    applyAppearance(profile.color || '#6558d3', !!profile.dark);
+  }
+  function applyAppearance(color, dark) {
+    document.documentElement.style.setProperty('--site-primary', color);
+    document.querySelector('.app-root').classList.toggle('dark-mode', dark);
+    document.querySelector('.app-root').style.backgroundColor = dark ? '#171624' : '';
+    document.querySelector('.app-root').style.color = dark ? '#f5f3ff' : '';
+  }
+  function render() {
+    const done = tasks.filter(t => t.done).length;
+    document.getElementById('totalCount').textContent = tasks.length;
+    document.getElementById('pendingCount').textContent = tasks.length - done;
+    document.getElementById('doneCount').textContent = done;
+    const progress = tasks.length ? Math.round(done / tasks.length * 100) : 0;
+    document.getElementById('progressText').textContent = progress + '% completado';
+    document.getElementById('progressFill').style.width = progress + '%';
+    document.getElementById('progressTrack').setAttribute('aria-valuenow', String(progress));
+    renderCalendar();
+    renderAchievements();
+    document.querySelectorAll('[data-filter]').forEach(b => b.classList.toggle('active', b.dataset.filter === filter));
+    const visible = tasks.filter(t => filter === 'all' || (filter === 'pending' && !t.done) || (filter === 'done' && t.done))
+      .filter(t => (t.title + ' ' + t.subject + ' ' + (t.notes || '')).toLocaleLowerCase('es').includes(searchInput.value.trim().toLocaleLowerCase('es')))
+      .sort((a,b) => Number(a.done) - Number(b.done) || a.due.localeCompare(b.due) || b.createdAt - a.createdAt);
+    if (!visible.length) {
+      const message = filter === 'done' ? 'Aún no has completado tareas.' : filter === 'pending' ? '¡No tienes tareas pendientes!' : 'Todavía no agregaste tareas.';
+      taskList.innerHTML = `<div class="empty"><div class="emoji">${filter === 'pending' ? '🎉' : '📝'}</div><strong>${message}</strong><span>${filter === 'all' ? 'Usa el formulario para organizar tu primera actividad.' : 'Tus tareas aparecerán aquí.'}</span></div>`;
+      return;
+    }
+    taskList.innerHTML = visible.map(t => {
+      const overdue = !t.done && t.due < todayISO();
+      return `<article class="task ${t.done ? 'done' : ''}">
+        <input class="check" type="checkbox" aria-label="Marcar ${safeText(t.title)} como completada" data-action="toggle" data-id="${safeText(t.id)}" ${t.done ? 'checked' : ''}>
+        <div class="task-content"><div class="task-title">${safeText(t.title)}</div>
+        ${t.notes ? `<div class="task-note">${safeText(t.notes)}</div>` : ''}
+        <div class="task-meta"><span class="pill">${safeText(t.subject)}</span><span class="pill ${overdue ? 'overdue' : ''}">${overdue ? 'Vencida · ' : 'Entrega · '}${safeText(formatDate(t.due))}</span><span class="pill">Prioridad: ${safeText(t.priority)}</span>${t.done ? '<span class="pill done-pill">Completada</span>' : ''}</div></div>
+        <div class="task-actions"><button class="icon-btn" type="button" data-action="edit" data-id="${safeText(t.id)}" aria-label="Editar tarea" title="Editar tarea">✏️</button><button class="icon-btn" type="button" data-action="delete" data-id="${safeText(t.id)}" aria-label="Eliminar tarea" title="Eliminar tarea">🗑️</button></div>
+      </article>`;
+    }).join('');
+  }
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const title = titleInput.value.trim();
+    const due = dateInput.value;
+    if (!title) { titleInput.focus(); return; }
+    if (!due) { dateInput.focus(); showToast('Elige una fecha de entrega.'); return; }
+    if (editingId) {
+      const task = tasks.find(t => t.id === editingId);
+      if (task) Object.assign(task, { title, subject:subjectInput.value, due, priority:priorityInput.value, notes:notesInput.value.trim() });
+      saveTasks(); render(); resetEditMode(); showToast('¡Cambios guardados!');
+    } else {
+      tasks.push({ id: (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2), title, subject:subjectInput.value, due, priority:priorityInput.value, notes:notesInput.value.trim(), done:false, createdAt:Date.now() });
+      saveTasks(); render();
+      form.reset(); dateInput.value = todayISO();
+      showToast('¡Tarea guardada correctamente!'); titleInput.focus();
+    }
+  });
+  taskList.addEventListener('change', e => {
+    const control = e.target.closest('[data-action="toggle"]');
+    if (!control) return;
+    const task = tasks.find(t => t.id === control.dataset.id);
+    if (task) { task.done = control.checked; saveTasks(); render(); showToast(task.done ? '¡Muy bien! Tarea completada.' : 'Tarea marcada como pendiente.'); }
+  });
+  taskList.addEventListener('click', e => {
+    const editButton = e.target.closest('[data-action="edit"]');
+    if (editButton) {
+      const taskToEdit = tasks.find(t => t.id === editButton.dataset.id);
+      if (taskToEdit) startEditing(taskToEdit);
+      return;
+    }
+    const button = e.target.closest('[data-action="delete"]');
+    if (!button) return;
+    const task = tasks.find(t => t.id === button.dataset.id);
+    if (!task) return;
+    if (confirm(`¿Seguro que quieres eliminar “${task.title}”?`)) {
+      tasks = tasks.filter(t => t.id !== task.id); saveTasks(); render(); showToast('Tarea eliminada.');
+    }
+  });
+  cancelEditButton.addEventListener('click', () => { resetEditMode(); showToast('Edición cancelada.'); });
+  document.getElementById('exportButton').addEventListener('click', () => {
+    if (!tasks.length) { showToast('Primero agrega alguna tarea para exportar.'); return; }
+    const columns = ['Tarea','Curso','Fecha de entrega','Prioridad','Detalles','Estado'];
+    const rows = tasks.map(t => [t.title,t.subject,t.due,t.priority,t.notes || '',t.done ? 'Completada' : 'Pendiente']);
+    const csv = '\uFEFF' + [columns, ...rows].map(row => row.map(value => '"' + String(value ?? '').replace(/"/g,'""') + '"').join(';')).join('\r\n');
+    const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a'); link.href = url; link.download = 'TareaFacil_tareas.csv'; document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+    showToast('¡Archivo de tareas exportado!');
+  });
+  function notifyUpcomingTasks() {
+    const today = todayISO();
+    const tomorrowDate = new Date(); tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+    const tomorrow = new Date(tomorrowDate.getTime() - tomorrowDate.getTimezoneOffset() * 60000).toISOString().slice(0,10);
+    const upcoming = tasks.filter(t => !t.done && (t.due === today || t.due === tomorrow));
+    if (!upcoming.length) { showToast('No tienes entregas para hoy ni mañana.'); return; }
+    const message = upcoming.map(t => `${t.title} (${t.due === today ? 'hoy' : 'mañana'})`).join(' · ');
+    if ('Notification' in window && Notification.permission === 'granted') new Notification('TareaFácil: próximas entregas', { body:message });
+    else showToast('Próximas entregas: ' + message);
+  }
+  reminderButton.addEventListener('click', async () => {
+    if (!('Notification' in window)) { showToast('Este navegador no permite avisos del sistema.'); notifyUpcomingTasks(); return; }
+    if (Notification.permission === 'default') {
+      try { await Notification.requestPermission(); } catch (e) {}
+    }
+    if (Notification.permission === 'granted') { reminderButton.textContent = '🔔 Revisar avisos'; notifyUpcomingTasks(); }
+    else { showToast('Permite las notificaciones en tu navegador para recibir avisos.'); notifyUpcomingTasks(); }
+  });
+  document.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => { filter = button.dataset.filter; render(); }));
+  searchInput.addEventListener('input', render);
+  document.getElementById('prevMonth').addEventListener('click', () => { calendarCursor.setMonth(calendarCursor.getMonth()-1); renderCalendar(); });
+  document.getElementById('nextMonth').addEventListener('click', () => { calendarCursor.setMonth(calendarCursor.getMonth()+1); renderCalendar(); });
+  calendarGrid.addEventListener('click', e => { const day = e.target.closest('[data-calendar-date]'); if (day) { selectedCalendarDate = day.dataset.calendarDate; renderCalendar(); } });
+  document.getElementById('saveSchedule').addEventListener('click', () => {
+    const schedule = {};
+    document.querySelectorAll('[data-schedule-day]').forEach(input => { const value = input.value.trim(); if (value) schedule[input.dataset.scheduleDay+'-'+input.dataset.scheduleSlot] = value; });
+    try { localStorage.setItem('tareafacil_schedule_v1', JSON.stringify(schedule)); showToast('¡Horario guardado!'); } catch(e) { showToast('No se pudo guardar el horario en este navegador.'); }
+  });
+  document.getElementById('saveProfile').addEventListener('click', () => {
+    const profile = { name:document.getElementById('profileName').value.trim(), color:document.getElementById('accentColor').value, dark:document.getElementById('darkModeToggle').checked };
+    try { localStorage.setItem('tareafacil_profile_v1', JSON.stringify(profile)); } catch(e) {}
+    applyAppearance(profile.color, profile.dark);
+    document.querySelector('.tagline').textContent = profile.name ? `¡Hola, ${profile.name}! Tu organización empieza aquí.` : 'Tu organización empieza aquí.';
+    showToast('¡Preferencias guardadas!');
+  });
+  document.getElementById('darkModeToggle').addEventListener('change', e => {
+    let profile = {};
+    try { profile = JSON.parse(localStorage.getItem('tareafacil_profile_v1') || '{}') || {}; } catch(err) {}
+    profile.dark = e.target.checked;
+    try { localStorage.setItem('tareafacil_profile_v1', JSON.stringify(profile)); } catch(err) {}
+    applyAppearance(profile.color || document.getElementById('accentColor').value, profile.dark);
+  });
+  document.getElementById('accentColor').addEventListener('change', e => applyAppearance(e.target.value, document.getElementById('darkModeToggle').checked));
+  loadSchedule();
+  loadProfile();
+  const savedProfile = (() => { try { return JSON.parse(localStorage.getItem('tareafacil_profile_v1') || '{}') || {}; } catch(e) { return {}; } })();
+  if (savedProfile.name) document.querySelector('.tagline').textContent = `¡Hola, ${savedProfile.name}! Tu organización empieza aquí.`;
+  render();
+})();
+</script>
+</body>
+</html>
